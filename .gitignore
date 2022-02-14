@@ -2,3 +2,4 @@
 .idea
 .migrations\*
 .static
+.staticfiles
