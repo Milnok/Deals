@@ -17,25 +17,25 @@ def save_file_to_bd(file):
     deals_list = []
     customer_list = []
     for row in csvfile:
-        this_customer = Customer.objects.get_or_create(username=row['customer'])
-        new_deal = Deal(
-            customer=this_customer[0],
+        row_customer = Customer.objects.get_or_create(username=row['customer'])
+        row_deal = Deal(
+            customer=row_customer[0],
             item=row['item'],
             total=row['total'],
             quantity=row['quantity'],
             date=row['date']
         )
         try:
-            new_deal.clean_fields()
+            row_deal.clean_fields()
         except ValidationError:
             return {"Status": "Error",
                     "Desc": f"Error in row: {','.join(filter(None, [*row.values()]))}"}, 400
-        this_customer[0].spent_money += int(row['total'])
-        this_gem = Gems.objects.get_or_create(gem=row['item'])[0]
-        this_gem.username.add(this_customer[0])
+        row_customer[0].spent_money += int(row['total'])
+        row_gem = Gems.objects.get_or_create(gem=row['item'])[0]
+        row_gem.username.add(row_customer[0])
 
-        customer_list.append(this_customer[0])
-        deals_list.append(new_deal)
+        customer_list.append(row_customer[0])
+        deals_list.append(row_deal)
     Customer.objects.bulk_update(customer_list, fields=['spent_money'])
     Deal.objects.bulk_create(deals_list)
 

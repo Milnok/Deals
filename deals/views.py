@@ -11,6 +11,7 @@ from .services import save_file_to_bd
 
 class DealsAPIView(generics.CreateAPIView):
     serializer_class = FileUploadSerializer
+    queryset = Customer.objects.all()[:5]
 
     @method_decorator(cache_page(60))
     def get(self, request, *args, **kwargs):
